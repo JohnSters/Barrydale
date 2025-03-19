@@ -14,6 +14,8 @@
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
 
 <PageTitle>Register - Barrydale Tourism</PageTitle>
 
@@ -27,8 +29,6 @@
             <h1>Create Account</h1>
             <p>Join the Barrydale Tourism community</p>
         </div>
-        
-        <StatusMessage Message="@Message" />
         
         <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register" class="auth-form">
             <DataAnnotationsValidator />
@@ -58,6 +58,27 @@
                 <a href="/login-page" class="auth-link">Sign In</a>
             </div>
         </EditForm>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Registration Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="error-icon-container">
+                    <i class="bi bi-exclamation-circle error-icon"></i>
+                </div>
+                <p class="error-message-text">@errorMessage</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -234,6 +255,54 @@
         margin-top: 0.25rem;
         text-align: center;
     }
+    
+    /* Modal styles */
+    .modal-content {
+        border: none;
+        border-radius: 12px;
+    }
+    
+    .modal-header {
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        background-color: #f8f9fa;
+    }
+    
+    .modal-title {
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    
+    .modal-footer {
+        border-top: 1px solid rgba(0,0,0,0.05);
+        background-color: #f8f9fa;
+    }
+    
+    .error-icon-container {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    
+    .error-icon {
+        font-size: 3rem;
+        color: var(--error-color);
+    }
+    
+    .error-message-text {
+        text-align: center;
+        font-size: 1.1rem;
+        color: var(--text-color);
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 0.5rem 1.5rem;
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+    }
 
     /* Responsive */
     @@media (max-width: 576px) {
@@ -255,6 +324,12 @@
 
 @code {
     private IEnumerable<IdentityError>? identityErrors;
+    private string? errorMessage;
+    private bool showErrorAfterRender = false;
+    private IJSObjectReference? _module;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();
@@ -276,6 +351,46 @@
         if (!result.Succeeded)
         {
             identityErrors = result.Errors;
+            errorMessage = string.Join("<br>", identityErrors.Select(error => error.Description));
+            showErrorAfterRender = true;
+            
+            await InvokeAsync(StateHasChanged);
+            
+            // Only try to show the modal if we're not statically rendering
+            try
+            {
+                // Try to set the error message directly in the DOM
+                string escapedErrorMessage = errorMessage.Replace("\"", "\\\"").Replace("\n", "\\n");
+                await JSRuntime.InvokeVoidAsync("eval", $@"
+                    try {{
+                        const errorElement = document.querySelector('.error-message-text');
+                        if (errorElement) {{
+                            errorElement.innerHTML = ""{escapedErrorMessage}"";
+                        }}
+                    }} catch (error) {{
+                        console.error('Error setting error message:', error);
+                    }}
+                ");
+                
+                // Try to show the modal
+                if (_module != null)
+                {
+                    await _module.InvokeVoidAsync("showModal", "errorModal");
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("showErrorModal");
+                }
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("JavaScript interop"))
+            {
+                // Ignore JavaScript interop errors during static rendering
+                // The modal will be available after hydration
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error handling registration failure: {ex.Message}");
+            }
             return;
         }
 
@@ -286,6 +401,84 @@
 
         await SignInManager.SignInAsync(user, isPersistent: false);
         RedirectManager.RedirectTo(ReturnUrl ?? "/home");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                // Load the Bootstrap JavaScript module if needed
+                _module = await JSRuntime.InvokeAsync<IJSObjectReference>(
+                    "import", "/_content/Barrydale/js/bootstrap-interop.js");
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("JavaScript interop"))
+            {
+                // Ignore JavaScript interop errors during static rendering
+            }
+            catch (Exception)
+            {
+                // Fallback if the module approach doesn't work - use direct evaluation
+                try
+                {
+                    await JSRuntime.InvokeVoidAsync("eval", @"
+                        window.showErrorModal = function() {
+                            var modalElement = document.getElementById('errorModal');
+                            if (modalElement && typeof bootstrap !== 'undefined') {
+                                var modal = new bootstrap.Modal(modalElement);
+                                modal.show();
+                            } else {
+                                console.error('Modal element or bootstrap not found');
+                            }
+                        }
+                    ");
+                }
+                catch (InvalidOperationException ex) when (ex.Message.Contains("JavaScript interop"))
+                {
+                    // Ignore JS errors during static rendering
+                }
+            }
+        }
+        else if (showErrorAfterRender)
+        {
+            showErrorAfterRender = false;
+            try
+            {
+                if (_module != null)
+                {
+                    await _module.InvokeVoidAsync("showModal", "errorModal");
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("showErrorModal");
+                }
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("JavaScript interop"))
+            {
+                // Still in a static rendering phase or modal not ready
+            }
+            catch (Exception ex)
+            {
+                // Fallback - if we can't show the modal, at least log the error
+                Console.WriteLine($"Error showing modal: {ex.Message}");
+            }
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (_module != null)
+            {
+                await _module.DisposeAsync();
+            }
+        }
+        catch
+        {
+            // Ignore disposal errors
+        }
     }
 
     private ApplicationUser CreateUser()
@@ -329,3 +522,34 @@
         public string ConfirmPassword { get; set; } = "";
     }
 }
+
+<script>
+    // Ensure Bootstrap is properly loaded
+    if (typeof bootstrap === 'undefined') {
+        console.warn('Bootstrap not found, attempting to load it');
+        
+        // Create and append the Bootstrap script if not already present
+        if (!document.querySelector('script[src*="bootstrap.bundle.min.js"]')) {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js';
+            script.integrity = 'sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL';
+            script.crossOrigin = 'anonymous';
+            document.body.appendChild(script);
+            
+            script.onload = function() {
+                console.log('Bootstrap loaded successfully');
+                // Check for an error message and show the modal if needed
+                const errorText = document.querySelector('.error-message-text');
+                if (errorText && errorText.textContent) {
+                    setTimeout(function() {
+                        const errorModal = document.getElementById('errorModal');
+                        if (errorModal) {
+                            const modal = new bootstrap.Modal(errorModal);
+                            modal.show();
+                        }
+                    }, 500);
+                }
+            };
+        }
+    }
+</script>
