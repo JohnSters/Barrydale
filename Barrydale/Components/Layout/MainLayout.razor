@@ -1,6 +1,46 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
 
-@Body
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <div class="profile-menu">
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="dropdown">
+                            <button class="btn btn-link dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i>
+                                <span>@context.User.Identity?.Name</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="Account/Manage">My Profile</a></li>
+                                <li><a class="dropdown-item" href="Account/Manage/BusinessProfile">My Business</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="Account/Logout">
+                                        <button type="submit" class="dropdown-item">Log Out</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a href="@($"login-page?returnUrl={Uri.EscapeDataString(NavigationManager.Uri)}")" class="btn btn-primary">Log in</a>
+                        <a href="Account/Register" class="btn btn-outline-primary ms-2">Register</a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.

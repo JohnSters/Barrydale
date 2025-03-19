@@ -1,0 +1,104 @@
+@inject NavigationManager NavigationManager
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">
+            <div class="brand-logo">BT</div>
+            <span class="brand-text">Barrydale Tourism</span>
+        </a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <i class="bi bi-house-door"></i> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="explore">
+                <i class="bi bi-compass"></i> Explore
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="businesses">
+                <i class="bi bi-shop"></i> Businesses
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="accommodations">
+                <i class="bi bi-building"></i> Accommodations
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="restaurants">
+                <i class="bi bi-cup-hot"></i> Restaurants
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="attractions">
+                <i class="bi bi-geo-alt"></i> Attractions
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="events">
+                <i class="bi bi-calendar-event"></i> Events
+            </NavLink>
+        </div>
+        
+        <AuthorizeView>
+            <Authorized>
+                <hr class="nav-divider" />
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Manage">
+                        <i class="bi bi-person"></i> My Profile
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Manage/BusinessProfile">
+                        <i class="bi bi-briefcase"></i> My Business
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        
+        <AuthorizeView Roles="Admin">
+            <hr class="nav-divider" />
+            <div class="nav-heading px-3">Administration</div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="admin/dashboard">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="admin/users">
+                    <i class="bi bi-people"></i> Users
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="admin/approvals">
+                    <i class="bi bi-check-square"></i> Approvals
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="admin/subscriptions">
+                    <i class="bi bi-credit-card"></i> Subscriptions
+                </NavLink>
+            </div>
+        </AuthorizeView>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+} 

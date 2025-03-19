@@ -1,7 +1,300 @@
-﻿@page "/home"
+﻿@page "/"
+@inject NavigationManager NavigationManager
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Barrydale Tourism - Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="home-container">
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Welcome to Barrydale</h1>
+            <p class="hero-subtitle">Discover the hidden gem of the Klein Karoo</p>
+            <div class="hero-actions">
+                <button class="btn btn-primary btn-lg" @onclick="NavigateToExplore">
+                    <i class="bi bi-compass me-2"></i> Explore Barrydale
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <section class="highlights-section">
+        <div class="container">
+            <h2 class="section-title">Local Highlights</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="highlight-card">
+                        <div class="highlight-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <h3>Accommodations</h3>
+                        <p>Find the perfect place to stay, from luxury guest houses to cozy self-catering cottages.</p>
+                        <a href="accommodations" class="btn btn-outline-primary">Browse All <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="highlight-card">
+                        <div class="highlight-icon">
+                            <i class="bi bi-cup-hot"></i>
+                        </div>
+                        <h3>Restaurants</h3>
+                        <p>Experience local cuisine and internationally inspired dishes in our charming eateries.</p>
+                        <a href="restaurants" class="btn btn-outline-primary">Browse All <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="highlight-card">
+                        <div class="highlight-icon">
+                            <i class="bi bi-geo-alt"></i>
+                        </div>
+                        <h3>Attractions</h3>
+                        <p>Explore natural wonders, historical sites, and unique art galleries around town.</p>
+                        <a href="attractions" class="btn btn-outline-primary">Browse All <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="featured-section">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h2 class="section-title mb-0">Featured Businesses</h2>
+                <a href="businesses" class="view-all-link">View All <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="row g-4">
+                @foreach (var business in GetFeaturedBusinesses())
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="business-card">
+                            <div class="business-image" style="background-image: url('@business.ImageUrl')">
+                                <div class="business-type">@business.Type</div>
+                            </div>
+                            <div class="business-content">
+                                <h3 class="business-title">@business.Name</h3>
+                                <div class="business-rating">
+                                    @for (int i = 0; i < 5; i++)
+                                    {
+                                        if (i < business.Rating)
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star"></i>
+                                        }
+                                    }
+                                    <span>(@business.ReviewCount)</span>
+                                </div>
+                                <p class="business-description">@business.Description</p>
+                                <a href="@($"business/{business.Id}")" class="btn btn-primary w-100">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+    
+    <section class="events-section">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h2 class="section-title mb-0">Upcoming Events</h2>
+                <a href="events" class="view-all-link">View All <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="events-wrapper">
+                @foreach (var evnt in GetUpcomingEvents())
+                {
+                    <div class="event-card">
+                        <div class="event-date">
+                            <div class="event-month">@evnt.Month</div>
+                            <div class="event-day">@evnt.Day</div>
+                        </div>
+                        <div class="event-content">
+                            <h3 class="event-title">@evnt.Title</h3>
+                            <div class="event-details">
+                                <span class="event-time"><i class="bi bi-clock me-2"></i>@evnt.Time</span>
+                                <span class="event-location"><i class="bi bi-geo-alt me-2"></i>@evnt.Location</span>
+                            </div>
+                            <p class="event-description">@evnt.Description</p>
+                        </div>
+                        <div class="event-actions">
+                            <a href="@($"event/{evnt.Id}")" class="btn btn-outline-primary">Details</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+    
+    <section class="about-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h2 class="section-title">About Barrydale</h2>
+                    <p>Nestled between the Langeberg and Swartberg mountain ranges, Barrydale is a charming town that blends Klein Karoo and Overberg influences.</p>
+                    <p>Once a quiet farming community, Barrydale has evolved into a vibrant hub for artists, creatives, and nature enthusiasts while maintaining its peaceful rural character.</p>
+                    <p>Surrounded by natural beauty, our town offers a perfect base for exploring the region's mountains, nature reserves, and the famous Route 62.</p>
+                    <a href="about" class="btn btn-outline-primary">Learn More About Barrydale</a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="about-image">
+                        <img src="images/barrydale-landscape.jpg" alt="Barrydale Landscape" class="img-fluid rounded shadow">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <AuthorizeView>
+        <Authorized>
+            <section class="business-cta-section">
+                <div class="container">
+                    <div class="business-cta-card">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">
+                                <h2>Own a Business in Barrydale?</h2>
+                                <p>List your business on our platform to increase visibility and connect with tourists visiting the area.</p>
+                                <ul class="business-benefits">
+                                    <li><i class="bi bi-check-circle"></i> Create an attractive business profile</li>
+                                    <li><i class="bi bi-check-circle"></i> Showcase your services and products</li>
+                                    <li><i class="bi bi-check-circle"></i> Receive ratings and reviews from customers</li>
+                                    <li><i class="bi bi-check-circle"></i> Promote special offers and events</li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-4 text-center text-lg-end mt-4 mt-lg-0">
+                                <a href="Account/Manage/BusinessProfile" class="btn btn-primary btn-lg">Manage Your Business</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </Authorized>
+        <NotAuthorized>
+            <section class="business-cta-section">
+                <div class="container">
+                    <div class="business-cta-card">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">
+                                <h2>Own a Business in Barrydale?</h2>
+                                <p>List your business on our platform to increase visibility and connect with tourists visiting the area.</p>
+                                <ul class="business-benefits">
+                                    <li><i class="bi bi-check-circle"></i> Create an attractive business profile</li>
+                                    <li><i class="bi bi-check-circle"></i> Showcase your services and products</li>
+                                    <li><i class="bi bi-check-circle"></i> Receive ratings and reviews from customers</li>
+                                    <li><i class="bi bi-check-circle"></i> Promote special offers and events</li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-4 text-center text-lg-end mt-4 mt-lg-0">
+                                <a href="Account/Register" class="btn btn-primary btn-lg">Register Your Business</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
 
-Welcome to your new app.
+@code {
+    private void NavigateToExplore()
+    {
+        NavigationManager.NavigateTo("explore");
+    }
+    
+    private class BusinessModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Type { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string ImageUrl { get; set; } = "";
+        public int Rating { get; set; }
+        public int ReviewCount { get; set; }
+    }
+    
+    private class EventModel
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string Month { get; set; } = "";
+        public string Day { get; set; } = "";
+        public string Time { get; set; } = "";
+        public string Location { get; set; } = "";
+    }
+    
+    private List<BusinessModel> GetFeaturedBusinesses()
+    {
+        // This would typically come from a database, but for now we'll use sample data
+        return new List<BusinessModel>
+        {
+            new BusinessModel 
+            { 
+                Id = 1, 
+                Name = "Barrydale Karoo Hotel", 
+                Type = "Accommodation", 
+                Description = "Historic hotel offering comfortable rooms with traditional Karoo hospitality and an on-site restaurant.",
+                ImageUrl = "images/karoo-hotel.jpg",
+                Rating = 4,
+                ReviewCount = 42
+            },
+            new BusinessModel 
+            { 
+                Id = 2, 
+                Name = "Diesel & Crème", 
+                Type = "Restaurant", 
+                Description = "Vintage diner serving gourmet milkshakes and classic American-style food with a South African twist.",
+                ImageUrl = "images/diesel-creme.jpg",
+                Rating = 5,
+                ReviewCount = 87
+            },
+            new BusinessModel 
+            { 
+                Id = 3, 
+                Name = "Magpie Art Collective", 
+                Type = "Shop", 
+                Description = "Artist-run gallery and workshop creating unique handcrafted lighting and decorative pieces.",
+                ImageUrl = "images/magpie-gallery.jpg",
+                Rating = 5,
+                ReviewCount = 28
+            }
+        };
+    }
+    
+    private List<EventModel> GetUpcomingEvents()
+    {
+        // This would typically come from a database, but for now we'll use sample data
+        return new List<EventModel>
+        {
+            new EventModel 
+            { 
+                Id = 1, 
+                Title = "Barrydale Wine Festival", 
+                Description = "Annual celebration of local wines featuring tastings, food pairings, and live music.",
+                Month = "Jun",
+                Day = "18",
+                Time = "12:00 PM - 8:00 PM",
+                Location = "Main Street, Barrydale"
+            },
+            new EventModel 
+            { 
+                Id = 2, 
+                Title = "Karoo Art Exhibition", 
+                Description = "Showcasing contemporary and traditional artworks from local and regional artists.",
+                Month = "Jul",
+                Day = "02",
+                Time = "10:00 AM - 4:00 PM",
+                Location = "Barrydale Art Gallery"
+            },
+            new EventModel 
+            { 
+                Id = 3, 
+                Title = "Route 62 Marathon", 
+                Description = "Scenic marathon and half-marathon along the famous Route 62 through beautiful landscapes.",
+                Month = "Aug",
+                Day = "15",
+                Time = "6:00 AM",
+                Location = "Starting at Town Hall"
+            }
+        };
+    }
+}

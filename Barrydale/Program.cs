@@ -65,12 +65,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-// Add a redirect from the root path to the login page
-app.MapGet("/", context => {
-    context.Response.Redirect("/login-page");
-    return Task.CompletedTask;
-});
-
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Barrydale.Client._Imports).Assembly);
