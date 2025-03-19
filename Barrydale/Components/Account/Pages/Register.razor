@@ -15,44 +15,243 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Register</PageTitle>
+<PageTitle>Register - Barrydale Tourism</PageTitle>
 
-<h1>Register</h1>
-
-<div class="row">
-    <div class="col-md-4">
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <div class="logo-circle">BT</div>
+        </div>
+        
+        <div class="auth-header">
+            <h1>Create Account</h1>
+            <p>Join the Barrydale Tourism community</p>
+        </div>
+        
         <StatusMessage Message="@Message" />
-        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
+        
+        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register" class="auth-form">
             <DataAnnotationsValidator />
-            <h2>Create a new account.</h2>
-            <hr />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label for="email">Email</label>
-                <ValidationMessage For="() => Input.Email" class="text-danger" />
+            
+            <div class="form-group">
+                <label for="email" class="text-center">Email Address</label>
+                <InputText @bind-Value="Input.Email" class="form-control" id="email" autocomplete="username" aria-required="true" placeholder="Enter your email" />
+                <ValidationMessage For="() => Input.Email" class="error-message" />
             </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="password">Password</label>
-                <ValidationMessage For="() => Input.Password" class="text-danger" />
+            
+            <div class="form-group">
+                <label for="password" class="text-center">Password</label>
+                <InputText type="password" @bind-Value="Input.Password" class="form-control" id="password" autocomplete="new-password" aria-required="true" placeholder="Enter your password" />
+                <ValidationMessage For="() => Input.Password" class="error-message" />
             </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="confirm-password">Confirm Password</label>
-                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+            
+            <div class="form-group">
+                <label for="confirm-password" class="text-center">Confirm Password</label>
+                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" id="confirm-password" autocomplete="new-password" aria-required="true" placeholder="Confirm your password" />
+                <ValidationMessage For="() => Input.ConfirmPassword" class="error-message" />
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            
+            <button type="submit" class="btn-submit">Create Account</button>
+            
+            <div class="auth-footer">
+                <span>Already have an account?</span>
+                <a href="/login-page" class="auth-link">Sign In</a>
+            </div>
         </EditForm>
     </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            <ExternalLoginPicker />
-        </section>
-    </div>
 </div>
+
+<style>
+    :root {
+        --primary-color: #3498db;
+        --primary-dark: #2980b9;
+        --text-color: #333;
+        --text-light: #7f8c8d;
+        --border-color: #e1e1e1;
+        --background-color: #3498db;
+        --error-color: #e74c3c;
+        --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Main container */
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: var(--background-color);
+        padding: 1.5rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Card styles */
+    .auth-card {
+        width: 100%;
+        max-width: 450px;
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        padding: 2.5rem 2.5rem;
+        overflow: hidden;
+    }
+
+    /* Logo */
+    .auth-logo {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .logo-circle {
+        width: 70px;
+        height: 70px;
+        background-color: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 1.75rem;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+    }
+
+    /* Header */
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .auth-header h1 {
+        color: var(--text-color);
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .auth-header p {
+        color: var(--text-light);
+        font-size: 0.95rem;
+    }
+
+    /* Form */
+    .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        padding: 0 10px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+
+    .form-group label {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--text-color);
+        margin-bottom: 0.25rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        transition: all 0.2s ease;
+        text-align: center;
+        max-width: 95%;
+        margin: 0 auto;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.15);
+    }
+
+    .form-control::placeholder {
+        color: #aaa;
+        text-align: center;
+    }
+
+    /* Button */
+    .btn-submit {
+        margin-top: 0.75rem;
+        width: 95%;
+        margin: 0.75rem auto 0;
+        padding: 0.9rem;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-submit:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+    }
+
+    .btn-submit:active {
+        transform: translateY(0);
+    }
+
+    /* Footer */
+    .auth-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--text-light);
+    }
+
+    .auth-link {
+        color: var(--primary-color);
+        font-weight: 500;
+        text-decoration: none;
+        margin-left: 0.3rem;
+        transition: color 0.2s;
+    }
+
+    .auth-link:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+
+    /* Error message */
+    .error-message {
+        color: var(--error-color);
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        text-align: center;
+    }
+
+    /* Responsive */
+    @@media (max-width: 576px) {
+        .auth-card {
+            padding: 2rem 1.5rem;
+        }
+        
+        .logo-circle {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+        
+        .auth-header h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
 
 @code {
     private IEnumerable<IdentityError>? identityErrors;
@@ -82,24 +281,11 @@
 
         Logger.LogInformation("User created a new account with password.");
 
-        var userId = await UserManager.GetUserIdAsync(user);
-        var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var callbackUrl = NavigationManager.GetUriWithQueryParameters(
-            NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
-            new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
-
-        await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
-
-        if (UserManager.Options.SignIn.RequireConfirmedAccount)
-        {
-            RedirectManager.RedirectTo(
-                "Account/RegisterConfirmation",
-                new() { ["email"] = Input.Email, ["returnUrl"] = ReturnUrl });
-        }
+        // Skip email confirmation since we don't have email services
+        await UserManager.ConfirmEmailAsync(user, await UserManager.GenerateEmailConfirmationTokenAsync(user));
 
         await SignInManager.SignInAsync(user, isPersistent: false);
-        RedirectManager.RedirectTo(ReturnUrl);
+        RedirectManager.RedirectTo(ReturnUrl ?? "/home");
     }
 
     private ApplicationUser CreateUser()
