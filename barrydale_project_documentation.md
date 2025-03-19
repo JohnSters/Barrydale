@@ -36,6 +36,10 @@ The Barrydale Tourism App is a web application built using Blazor WebAssembly wi
   - **ApplicationDbContext.cs**: EF Core database context
   - **ApplicationUser.cs**: Identity user model
   - **Migrations/**: Database migration files
+- **Models/**: Business domain models
+  - **Business.cs**: Base business model
+  - **Specialized business types**: Restaurant, Accommodation, Shop, etc.
+  - **Supporting models**: Reviews, Events, BusinessHours, etc.
 - **Components/**: Server-side Blazor components
   - **App.razor**: Root application component
   - **Routes.razor**: Application routing configuration
@@ -80,7 +84,64 @@ The application uses ASP.NET Core Identity with individual user accounts, allowi
 - **Identity Schema**: Standard ASP.NET Core Identity tables
 
 ### Data Models
-- **ApplicationUser**: Extended identity user model ready for customization
+
+#### Business Models
+The application uses a Table-per-Hierarchy (TPH) inheritance pattern to handle different types of businesses:
+
+##### Base Business Model
+- **Business**: Core entity with common properties for all business types:
+  - Basic information (name, description, contact details)
+  - Location data (address, coordinates)
+  - Metadata (created date, active status)
+  - BusinessType discriminator field
+
+##### Specialized Business Types
+- **Restaurant**:
+  - Cuisine information
+  - Reservation capabilities
+  - Price range indicators
+  - Special diet accommodations
+  - Meal types served
+
+- **Accommodation**:
+  - Room and guest capacity
+  - Amenities (WiFi, parking, pool)
+  - Property type and details
+  - Pricing information
+  - Check-in instructions
+
+- **Shop**:
+  - Product types and brands
+  - Online store capabilities
+  - Delivery information
+  - Payment methods
+
+- **TourService**:
+  - Tour types and duration
+  - Group sizes and pricing
+  - Tour highlights and inclusions
+  - Meeting point information
+
+- **Attraction**:
+  - Attraction type and features
+  - Accessibility information
+  - Visit duration recommendations
+  - Admission details
+
+##### Supporting Models
+- **ApplicationUser**: Extended identity user with profile details
+- **BusinessImage**: Images for business listings
+- **BusinessHours**: Operating hours by day of week
+- **Subscription**: Payment and subscription details
+- **Event**: Tourism events information
+- **Review**: Customer reviews and ratings
+
+### Inheritance Strategy
+The application uses Entity Framework Core's Table-per-Hierarchy (TPH) pattern:
+- All business types stored in a single `Businesses` table
+- `BusinessType` field used as discriminator
+- EF Core handles mapping to appropriate derived classes
+- Maintains database simplicity while providing type-specific properties
 
 ## Client-Side Architecture
 
@@ -123,8 +184,8 @@ The application uses a hybrid rendering approach:
 ## Next Steps for Development
 
 ### Immediate Tasks
-1. Design and implement the business listing data models
-2. Create user profile management screens
+1. Implement user interfaces for different business types
+2. Create business registration workflows
 3. Implement subscription management with payment integration
 4. Design and develop the public-facing tourism information pages
 
