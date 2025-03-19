@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35728.132 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barrydale", "Barrydale\Barrydale.csproj", "{A8A43011-87C2-47EF-8AFF-B1EE77158555}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barrydale.Client", "Barrydale.Client\Barrydale.Client.csproj", "{48218BC0-A234-4B44-8F40-BB2AFCA33DDD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8A43011-87C2-47EF-8AFF-B1EE77158555}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8A43011-87C2-47EF-8AFF-B1EE77158555}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8A43011-87C2-47EF-8AFF-B1EE77158555}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8A43011-87C2-47EF-8AFF-B1EE77158555}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48218BC0-A234-4B44-8F40-BB2AFCA33DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48218BC0-A234-4B44-8F40-BB2AFCA33DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48218BC0-A234-4B44-8F40-BB2AFCA33DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48218BC0-A234-4B44-8F40-BB2AFCA33DDD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
