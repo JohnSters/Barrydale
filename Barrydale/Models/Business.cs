@@ -34,8 +34,12 @@ namespace Barrydale.Models
         
         public decimal Longitude { get; set; }
         
+        [Required]
         [StringLength(50)]
-        public string Category { get; set; } = string.Empty;
+        public string BusinessType { get; set; } = "Generic"; // Discriminator: "Restaurant", "Accommodation", "Shop", etc.
+        
+        [StringLength(50)]
+        public string Category { get; set; } = string.Empty; // Sub-category within BusinessType
         
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         

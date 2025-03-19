@@ -12,6 +12,11 @@ namespace Barrydale.Data
         }
 
         public DbSet<Business> Businesses { get; set; }
+        public DbSet<Restaurant> Restaurants { get; set; }
+        public DbSet<Accommodation> Accommodations { get; set; }
+        public DbSet<Shop> Shops { get; set; }
+        public DbSet<TourService> TourServices { get; set; }
+        public DbSet<Attraction> Attractions { get; set; }
         public DbSet<BusinessImage> BusinessImages { get; set; }
         public DbSet<BusinessHours> BusinessHours { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
@@ -22,7 +27,38 @@ namespace Barrydale.Data
         {
             base.OnModelCreating(builder);
 
-            // Configure relationships and constraints
+            // Configure TPH inheritance
+            builder.Entity<Business>()
+                .HasDiscriminator<string>("BusinessType")
+                .HasValue<Business>("Generic")
+                .HasValue<Restaurant>("Restaurant")
+                .HasValue<Accommodation>("Accommodation")
+                .HasValue<Shop>("Shop")
+                .HasValue<TourService>("TourService")
+                .HasValue<Attraction>("Attraction");
+                
+            // Configure decimal precision
+            builder.Entity<Business>()
+                .Property(b => b.Latitude)
+                .HasPrecision(18, 9);
+
+            builder.Entity<Business>()
+                .Property(b => b.Longitude)
+                .HasPrecision(18, 9);
+
+            builder.Entity<Accommodation>()
+                .Property(a => a.BasePricePerNight)
+                .HasPrecision(10, 2);
+
+            builder.Entity<TourService>()
+                .Property(t => t.PricePerPerson)
+                .HasPrecision(10, 2);
+
+            builder.Entity<Attraction>()
+                .Property(a => a.AdmissionFee)
+                .HasPrecision(10, 2);
+
+            // Configure relationships
             builder.Entity<Business>()
                 .HasOne(b => b.Owner)
                 .WithMany(u => u.OwnedBusinesses)
@@ -47,15 +83,6 @@ namespace Barrydale.Data
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Fix decimal precision warnings
-            builder.Entity<Business>()
-                .Property(b => b.Latitude)
-                .HasPrecision(18, 9);
-
-            builder.Entity<Business>()
-                .Property(b => b.Longitude)
-                .HasPrecision(18, 9);
-
             builder.Entity<Event>()
                 .Property(e => e.Latitude)
                 .HasPrecision(18, 9);
@@ -71,8 +98,6 @@ namespace Barrydale.Data
             builder.Entity<Subscription>()
                 .Property(s => s.Amount)
                 .HasPrecision(10, 2);
-
-            // Add more configurations as needed
         }
     }
 }
