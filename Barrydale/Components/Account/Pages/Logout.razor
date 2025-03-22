@@ -1,0 +1,30 @@
+@page "/Account/Logout"
+@using Microsoft.AspNetCore.Identity
+@using Barrydale.Data
+@using Microsoft.AspNetCore.Components.Forms
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject NavigationManager NavigationManager
+
+<PageTitle>Logging out...</PageTitle>
+
+<div class="text-center">
+    <h1>Logging out...</h1>
+    <p>Please wait while we sign you out.</p>
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SignInManager.SignOutAsync();
+        var returnUrl = ReturnUrl ?? "/";
+        NavigationManager.NavigateTo(returnUrl);
+    }
+} 

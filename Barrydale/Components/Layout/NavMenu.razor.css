@@ -35,6 +35,12 @@
 .nav-item {
     font-size: 0.9rem;
     padding-bottom: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+/* Add top margin to first nav item to create space after brand */
+.nav-item:first-child {
+    margin-top: 1rem;
 }
 
 .nav-item ::deep a {
@@ -45,6 +51,7 @@
     align-items: center;
     line-height: 3rem;
     transition: all 0.2s ease;
+    padding: 0 1rem 0 1.25rem;
 }
 
 .nav-item ::deep a.active {
@@ -66,10 +73,11 @@
 .nav-scrollable {
     height: calc(100% - 3.5rem);
     overflow-y: auto;
+    padding-top: 0.5rem;
 }
 
 .nav-divider {
-    margin: 1rem 1rem;
+    margin: 1.25rem 1rem;
     opacity: 0.2;
     border-color: white;
 }
@@ -81,6 +89,7 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin: 0.5rem 0 0.75rem;
+    padding-left: 1.25rem;
 }
 
 @media (min-width: 641px) {
